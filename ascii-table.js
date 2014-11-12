@@ -494,19 +494,19 @@ AsciiTable.prototype.toString = function() {
   total -= this.__spacing
 
   // Heading
-  border && body.push(this._seperator(total - mLen + 1, this.__top))
+  border && body.push(this._rowSeperator(total - mLen + 1, this.__fill, this.__top))
   if (this.__name) {
     body.push(this._renderTitle(total - mLen + 1))
     border && body.push(this._seperator(total - mLen + 1))
   }
   if (this.__heading) {
-    body.push(this._renderRow(this.__heading, ' ', this.__headingAlign))
-    body.push(this._rowSeperator(mLen, this.__fill))
+    body.push(this._renderRow(this.__heading, ' ', this.__edge, this.__headingAlign))
+    body.push(this._rowSeperator(mLen, this.__fill, this.__top))
   }
   for (var i = 0; i < this.__rows.length; i++) {
     body.push(this._renderRow(this.__rows[i], ' '))
   }
-  border && body.push(this._seperator(total - mLen + 1, this.__bottom))
+  border && body.push(this._rowSeperator(total - mLen + 1, this.__fill, this.__bottom))
   return body.join('\n')
 }
 
@@ -526,13 +526,16 @@ AsciiTable.prototype._seperator = function(len, sep) {
 /**
  * Create a row seperator
  *
+ * @param {Number} maxCells Maximum number of cells
+ * @param {String} fill Char to fill the line
+ * @param {String} sep Char as a separator
  * @return {String} seperator
  * @api private
  */
 
-AsciiTable.prototype._rowSeperator = function() {
-  var blanks = AsciiTable.arrayFill(this.__maxCells, this.__fill)
-  return this._renderRow(blanks, this.__fill)
+AsciiTable.prototype._rowSeperator = function(maxCells, fill, sep) {
+  var blanks = AsciiTable.arrayFill(maxCells, fill)
+  return this._renderRow(blanks, fill, sep)
 }
 
 /**
@@ -554,14 +557,16 @@ AsciiTable.prototype._renderTitle = function(len) {
  *
  * @param {Array} row
  * @param {String} column seperator
+ * @param {String} edge separator (optional, default `this.__edge`)
  * @param {Number} total row alignment (optional, default `auto`)
  * @return {String} formatted row
  * @api private
  */
 
-AsciiTable.prototype._renderRow = function(row, str, align) {
+AsciiTable.prototype._renderRow = function(row, str, sep, align) {
   var tmp = ['']
     , max = this.__colMaxes
+    , sep = (!sep) ? this.__edge : sep;
 
   for (var k = 0; k < this.__maxCells; k++) {
     var cell = row[k]
@@ -580,9 +585,9 @@ AsciiTable.prototype._renderRow = function(row, str, align) {
 
     tmp.push(AsciiTable[method](cell, pad, str))
   }
-  var front = tmp.join(str + this.__edge + str)
+  var front = tmp.join(str + sep + str)
   front = front.substr(1, front.length)
-  return front + str + this.__edge
+  return front + str + sep
 }
 
 /*!
