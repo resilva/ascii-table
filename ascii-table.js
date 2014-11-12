@@ -454,6 +454,18 @@ AsciiTable.prototype.fromJSON = function(obj) {
 }
 
 /**
+ * Render the table as html with the current information
+ *
+ * @return {String} formatted table as HTML
+ * @api public
+ */
+AsciiTable.prototype.toHTML = function() {
+  var text = this.toString().replace(/ /g, '&nbsp;') + '';
+
+  return text.replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1<br>$2');
+}
+
+/**
  * Render the table with the current information
  *
  * @return {String} formatted table
